@@ -1,19 +1,27 @@
-import { getVal } from './compileTools'
-import { baseConfig } from './baseInterface'
+import { getVal } from "./compileTools";
+import { baseConfig } from "./baseInterface";
 
 export function textUpdate(node: HTMLElement, text: string): void {
-	node.textContent = text
+  node.textContent = text;
 }
 
 export function showUpdate(
-	node: HTMLElement,
-	vm: baseConfig,
-	reactive: string
+  node: HTMLElement,
+  vm: baseConfig,
+  reactive: string
 ): void {
-	console.log(getVal(vm, reactive), 'flag')
-	if (getVal(vm, reactive)) {
-		node.style.display = 'block'
-	} else {
-		node.style.display = 'none'
-	}
+  console.log(getVal(vm, reactive), "flag");
+  if (getVal(vm, reactive)) {
+    node.style.display = "block";
+  } else {
+    node.style.display = "none";
+  }
+}
+
+export function modelUpdate(
+  node: HTMLInputElement,
+  vm: baseConfig,
+  reactive: string
+): void {
+  node.value = getVal(vm, reactive);
 }
