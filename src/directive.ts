@@ -17,6 +17,11 @@ export const enum DirectiveType {
 	MODEL_DIRECTIVE = 3,
 
 	/**
+	 * v-html
+	 */
+	HTML_DIRECTIVE = 4,
+
+	/**
 	 * 简写的指令： @
 	 *  例如 @click
 	 */
