@@ -7,6 +7,7 @@ import {
 	showDirective,
 	modelDirective,
 	htmlDirective,
+	forDirective,
 } from './compileTools'
 import { DirectiveType } from './directive'
 
@@ -79,6 +80,11 @@ class Compile {
 						break
 					case DirectiveType.HTML_DIRECTIVE:
 						htmlDirective(node as unknown as HTMLInputElement, value, this.vm)
+						break
+					case DirectiveType.FOR_DIRECTIVE:
+						// console.log('commingfor')
+						forDirective(node, value, this.vm)
+						break
 					case 10:
 						let abbrDirective = name.slice(1)
 						onDirective(node, value, this.vm, abbrDirective, this.app)

@@ -1,4 +1,4 @@
-import { getVal } from './compileTools'
+import { changeContentValue, getVal } from './compileTools'
 import { baseConfig } from './baseInterface'
 
 export function textUpdate(node: HTMLElement, text: string): void {
@@ -34,4 +34,22 @@ export function htmlUpdate(node: HTMLElement, text: string) {
 	 *  最终浏览器再进行渲染  功能非常之强大
 	 */
 	node.innerHTML = text
+}
+
+export function forUpdate(node: HTMLElement, arr: object, vm): void {
+	/**
+	 * for循环 --
+	 * 	这里有优化空间 直接使用真实DOM操作了 浪费性能的
+	 */
+	let fragment: DocumentFragment = document.createDocumentFragment()
+	let innerHtml = node.innerHTML
+	let parent = node.parentNode
+	Object.values(arr).map(item => {
+		let value = changeContentValue(vm, innerHtml, item)
+		node.innerHTML = value
+		let tempNode = node.cloneNode(true)
+		fragment.appendChild(tempNode)
+	})
+	;(parent as HTMLElement).innerHTML = ''
+	parent.appendChild(fragment)
 }

@@ -2,21 +2,36 @@ import Watcher from './watcher'
 import DirectivError, { warn } from './error'
 import Jvue from './jvue'
 import { baseConfig } from './baseInterface'
-import { textUpdate, showUpdate, modelUpdate, htmlUpdate } from './update'
+import {
+	textUpdate,
+	showUpdate,
+	modelUpdate,
+	htmlUpdate,
+	forUpdate,
+} from './update'
 import { DirectiveType } from './directive'
 
 export function getVal(vm: baseConfig, expr): string {
 	// 根据表达式取出对应的数据
 	// 数据有可能是  student.name  student.age
-	return expr.split('.').reduce((data, current) => {
+	let reactiveData = expr.split('.').reduce((data, current) => {
 		return data[current]
 	}, vm.data)
+	return reactiveData === undefined ? `{{${expr}}}` : reactiveData
 }
 
 export function getContentValue(vm, expr): string {
 	// 遍历表达式  将内容重新替换成完整的内容返回
 	return expr.replace(/\{\{(.+?)\}\}/g, (...args) => {
+		console.log('ojnj', getVal(vm, args[1]))
 		return getVal(vm, args[1])
+	})
+}
+
+export function changeContentValue(vm, expr, text): string {
+	// 遍历表达式  将内容重新替换成完整的内容返回
+	return expr.replace(/\{\{(.+?)\}\}/g, (...args) => {
+		return text
 	})
 }
 
@@ -25,7 +40,7 @@ export function transferText(node: HTMLElement, expr: string, vm): void {
 	 *  expr => {{a}}  {{student.name}}
 	 */
 	// 执行转 reactive
-	console.log('TEXT_DIRECTIVE')
+	console.log('TEXT_DIRECTIVE', expr)
 	let fn = textUpdate
 	let content = expr.replace(/\{\{(.+?)\}\}/g, (...args) => {
 		let reactive = args[1]
@@ -34,6 +49,7 @@ export function transferText(node: HTMLElement, expr: string, vm): void {
 		})
 		return getVal(vm, reactive)
 	})
+	console.log('context!!!', content)
 	fn(node, content)
 }
 
@@ -89,7 +105,7 @@ export function modelDirective(
 		// throw new DirectivError(1, `${node.tagName}无法使用model指令`);
 		warn(`${node.tagName}无法使用model指令`)
 	}
-	console.log('定！！')
+	// console.log('定！！')
 	node.addEventListener('input', (e: any) => {
 		let inputValue = e.target.value
 		/**
@@ -122,6 +138,24 @@ export function htmlDirective(
 	fn(node, value)
 }
 
+/**
+ *
+ */
+export function forDirective(
+	node: HTMLElement,
+	reactive: string,
+	vm: baseConfig
+): void {
+	console.log('v-for:', node, reactive)
+	let array = getVal(vm, reactive.split(' in ')[1])
+	console.log('array!!!', array)
+	let fn = forUpdate
+	new Watcher(vm, reactive, () => {
+		fn(node, array as unknown as object, vm)
+	})
+	fn(node, array as unknown as object, vm)
+}
+
 export function getDirectiveType(expr: string): number {
 	// 判断表达式 是否是vue的特殊指令
 	// v-if=" " @click=""
@@ -143,6 +177,9 @@ export function getDirectiveType(expr: string): number {
 				break
 			case 'html':
 				flag = DirectiveType.HTML_DIRECTIVE
+				break
+			case 'for':
+				flag = DirectiveType.FOR_DIRECTIVE
 				break
 			default:
 				flag = DirectiveType.NONE_DIRECTIVE

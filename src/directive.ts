@@ -22,6 +22,11 @@ export const enum DirectiveType {
 	HTML_DIRECTIVE = 4,
 
 	/**
+	 * v-for
+	 */
+	FOR_DIRECTIVE = 5,
+
+	/**
 	 * 简写的指令： @
 	 *  例如 @click
 	 */

@@ -27,6 +27,9 @@
 				<p>测试v-html</p>
 				<div v-html="htmlString"></div>
 			</div>
+			<div class="Parent">
+				<div v-for="(item,index) in userList" :key="index">？？？{{item}}</div>
+			</div>
 
 			<button v-on:click="changeName">改名</button>
 			<button @click="changeMark">改名2</button>
@@ -47,6 +50,7 @@
 						},
 						htmlString:
 							'<div class="father"><p>hello world by v-html</p></div>',
+						userList: ['Jimmy', 'xuexue', 'jy'],
 					},
 					method: {
 						changeName() {
